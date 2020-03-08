@@ -6,38 +6,34 @@
 #include <boost/graph/graph_utility.hpp>
 
 using namespace boost;
+using namespace std;
 
-struct Vertex {
-	std::string name, label, shape;
-};
-
-struct Edge {
+struct DotVertex {
+	
 	std::string label;
-	double weight; // perhaps you need this later as well, just an example
+	
 };
 
-typedef property<graph_name_t, std::string> graph_p;
-typedef adjacency_list<vecS, vecS, directedS, Vertex, Edge, graph_p> graph_t;
+struct DotEdge {
+	std::string label;
+};
+
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS, DotVertex, DotEdge> graph_t;
 
 int main() {
-	// Construct an empty graph and prepare the dynamic_property_maps.
-	graph_t graph(0);
+	graph_t graphviz;
+	boost::dynamic_properties dp(boost::ignore_other_properties);
 
-	dynamic_properties dp/*(ignore_other_properties)*/;
-	dp.property("node_id", get(&Vertex::name, graph));
-	dp.property("label", get(&Vertex::label, graph));
-	dp.property("shape", get(&Vertex::shape, graph));
-	dp.property("label", get(&Edge::label, graph));
+//	dp.property("node_id", boost::get(&DotVertex::name, graphviz));
+	dp.property("label", boost::get(&DotVertex::label, graphviz));
+	//dp.property("peripheries", boost::get(&DotVertex::peripheries, graphviz));
+	dp.property("label", boost::get(&DotEdge::label, graphviz));
+	std::ifstream dot("C:/Users/pxg131330/Downloads/acmart-master/input.dot");
+	bool status = boost::read_graphviz(dot, graphviz, dp);
+	if (status)
+		cout << 255;
 
-	// Use ref_property_map to turn a graph property into a property map
-	boost::ref_property_map<graph_t *, std::string> gname(get_property(graph, graph_name));
-	dp.property("name", gname);
+	system("pause");
+	return 0;
 
-	std::ifstream dot("input.dot");
-
-	if (read_graphviz(dot, graph, dp/*, "node_id"*/)) {
-		std::cout << "Graph name: '" << get_property(graph, graph_name) << "'\n";
-		get_property(graph, graph_name) = "Let's give it a name";
-		write_graphviz_dp(std::cout, graph, dp/*, "node_id"*/);
-	}
 }
