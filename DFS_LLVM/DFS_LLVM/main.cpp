@@ -20,6 +20,21 @@ struct DotEdge {
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS, DotVertex, DotEdge> graph_t;
 
+class MyVisitor : public boost::default_dfs_visitor {
+public:
+	MyVisitor() : vv(new std::vector<string>()) {}
+
+	void discover_vertex(int v, const graph_t &g) const {
+		vv->push_back(g[v].label);
+		return;
+	}
+
+	std::vector<string> &GetVector() const { return *vv; }
+
+private:
+	boost::shared_ptr<std::vector<string> > vv;
+};
+
 int main() {
 	graph_t graphviz;
 	boost::dynamic_properties dp(boost::ignore_other_properties);
@@ -29,9 +44,22 @@ int main() {
 	//dp.property("peripheries", boost::get(&DotVertex::peripheries, graphviz));
 	dp.property("label", boost::get(&DotEdge::label, graphviz));
 	std::ifstream dot("C:/Users/pxg131330/Downloads/acmart-master/input.dot");
+	//auto colormap = boost::make_vector_property_map<boost::default_color_type>(indexmap);
+
+	auto indexmap = boost::get(boost::vertex_index, graphviz);
+	auto colormap = boost::make_vector_property_map<boost::default_color_type>(indexmap);
+
 	bool status = boost::read_graphviz(dot, graphviz, dp);
 	if (status)
 		cout << 255;
+
+	MyVisitor vis;
+	boost::depth_first_search(graphviz, vis, colormap,1);
+
+	std::vector<string> vctr = vis.GetVector();
+
+	for (auto id : vctr)
+		std::cout << id << " ";
 
 	system("pause");
 	return 0;
