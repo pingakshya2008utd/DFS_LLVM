@@ -4,6 +4,9 @@
 #include <boost/property_map/dynamic_property_map.hpp>
 #include <libs/graph/src/read_graphviz_new.cpp>
 #include <boost/graph/graph_utility.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/depth_first_search.hpp>
+
 
 using namespace boost;
 using namespace std;
@@ -20,6 +23,7 @@ struct DotEdge {
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS, DotVertex, DotEdge> graph_t;
 //typedef boost::graph_traits<graph_t>::vertex_descriptor DotVertex;
+typedef boost::graph_traits<graph_t>::vertex_descriptor vertex_t;
 
 /*
 class MyVisitor : public boost::default_dfs_visitor {
@@ -42,10 +46,10 @@ class MyVisitor : public boost::default_dfs_visitor {
 public:
 	MyVisitor() : vv(new std::vector<DotVertex>()) {}
 
-	void discover_vertex(DotVertex v, const graph_t& g) { //note the lack of const
+	void discover_vertex(vertex_t v, const graph_t& g) { //note the lack of const
 		//if (boost::in_degree(v, g) != 0) { //only print the vertices in the connected component (I already did MCC and removed edges so all the extra vertices are isolated)
-			std::cerr << v.label << std::endl;
-			vv->push_back(v);
+			std::cerr << g[v].label << std::endl;
+			vv->push_back(g[v]);
 		//}
 		return;
 	}
