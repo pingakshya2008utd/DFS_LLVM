@@ -48,7 +48,7 @@ public:
 
 	void discover_vertex(vertex_t v, const graph_t& g) { //note the lack of const
 		//if (boost::in_degree(v, g) != 0) { //only print the vertices in the connected component (I already did MCC and removed edges so all the extra vertices are isolated)
-			std::cerr << g[v].label << std::endl;
+			///std::cerr << g[v].label << std::endl;
 			vv->push_back(g[v]);
 		//}
 		return;
@@ -68,7 +68,8 @@ int main() {
 	dp.property("label", boost::get(&DotVertex::label, graphviz));
 	//dp.property("peripheries", boost::get(&DotVertex::peripheries, graphviz));
 	dp.property("label", boost::get(&DotEdge::label, graphviz));
-	std::ifstream dot("C:/Users/pxg131330/Downloads/acmart-master/cfg.main.dot");
+	std::ifstream dot("O:/total_new_apdcm/total_new_solution98/cfg.quantl.dot");
+	//std::ifstream dot("C:/Users/pxg131330/Downloads/acmart-master/cfg.main.dot");
 	//auto colormap = boost::make_vector_property_map<boost::default_color_type>(indexmap);
 
 	auto indexmap = boost::get(boost::vertex_index, graphviz);
@@ -79,14 +80,42 @@ int main() {
 	if (status)
 		cout << 255;
 
+	
+
 	MyVisitor vis;
 	//boost::depth_first_search(graphviz, vis, colormap,1);
 	boost::depth_first_search(graphviz, boost::visitor(vis));
 
 	std::vector<DotVertex> vctr = vis.GetVector();
 
+	
+
+	/*
 	for (auto id : vctr)
 		std::cout << id.label << " ";
+	*/
+
+	vector <int> indegree_vec, outdegree_vec;
+
+	for (auto v : make_iterator_range(vertices(graphviz))) {
+	//	cout << graphviz[v].label << " has " << degree(v, graphviz) << " neighbor(s): ";
+		outdegree_vec.push_back((int)out_degree(v, graphviz));
+		indegree_vec.push_back((int)in_degree(v, graphviz));
+
+		
+	}
+
+	int max_outedges = *max_element(outdegree_vec.begin(), outdegree_vec.end());
+	int max_inedges = *max_element(indegree_vec.begin(), indegree_vec.end());
+	int total_nodes = vctr.size();
+
+	cout << " max number of outgoing edges = " << max_outedges << endl;
+	cout << " max number of incoming edges = " << max_inedges << endl;
+	cout << " total number of nodes= " << total_nodes << endl;
+
+	outdegree_vec.clear();
+	indegree_vec.clear();
+	vctr.clear();
 
 	system("pause");
 	return 0;
