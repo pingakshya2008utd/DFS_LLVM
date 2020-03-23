@@ -8,6 +8,8 @@
 #include <boost/graph/depth_first_search.hpp>
 #include <experimental/filesystem>
 
+namespace fs = std::experimental::filesystem;
+
 
 using namespace boost;
 using namespace std;
@@ -61,16 +63,40 @@ private:
 
 
 int main() {
+
+	vector <string> dot_file_path_vec;
+	std::string path= "O:/ultimate_new_ave8_timed/";
+	std::string ext=".dot";
+	for (auto& p : fs::recursive_directory_iterator(path))
+	{
+		if (p.path().extension() == ext) {
+
+			string p_str = to_string(p);
+			if (p_str.find("cfg.ave8.dot") != string::npos) {
+				dot_file_path_vec.push_back(p_str);
+				//std::cout << p_str << '\n';
+			}
+
+		}
+			
+	}
 	
 	
-	vector <string> func_names{ "quantl", "encode", "decode", "reset", "upzero", "adpcm_main" };
+	
+	//vector <string> func_names{ "quantl", "encode", "decode", "reset", "upzero", "adpcm_main" };
+	vector <string> func_names{  "ave8" };
 	file_counter = 1;
-	for (int i = 0; i < 100; i++) {
+
+	for(int i=0; i<dot_file_path_vec.size(); i++){
+	//for (int i = 72; i < 73; i++) {
 		string directory_name = "total_new_solution " + to_string(i);
 		cout << directory_name << endl;
 		for (int j = 0; j < func_names.size(); j++) {
 			file_counter++;
-			string dot_file_name = "O:/total_new_apdcm/total_new_solution"+to_string(i)+"/cfg." + func_names[j] + ".dot";
+			//string dot_file_name = "O:/total_new_apdcm/total_new_solution"+to_string(i)+"/cfg." + func_names[j] + ".dot";
+			string dot_file_name = dot_file_path_vec[i];
+			replace(dot_file_name.begin(), dot_file_name.end(), '\\', '/');
+			cout << dot_file_name << endl;
 
 			bool exist = std::experimental::filesystem::exists(dot_file_name);
 
@@ -79,7 +105,12 @@ int main() {
 
 			func_name_for_res = func_names[j];
 			file_counter = i;
-			string result_file_name = "O:/total_new_apdcm/total_new_solution"+to_string(i)+"/" + func_names[j] + "_data.res";
+			string write_file_str = dot_file_name;
+			write_file_str.erase(write_file_str.length() - 12);
+			result_file_name = write_file_str  + func_names[j] + "_data.res";
+		//	cout << result_file_name << endl;
+			
+			//string result_file_name = "O:/total_new_apdcm/total_new_solution"+to_string(i)+"/" + func_names[j] + "_data.res";
 			graph_t graphviz;
 			boost::dynamic_properties dp(boost::ignore_other_properties);
 
@@ -114,6 +145,10 @@ int main() {
 				std::cout << id.label << " ";
 			*/
 
+
+	////////////////////// new comment starts here//////////////////////////////////////////////
+
+	
 			vector <int> indegree_vec, outdegree_vec;
 			std::ofstream outfile(result_file_name, std::ios_base::app);
 
@@ -130,8 +165,8 @@ int main() {
 			int total_nodes = vctr.size();
 
 			//	cout << " max number of outgoing edges = " << max_outedges << endl;
-			//	cout << " max number of incoming edges = " << max_inedges << endl;
-			//	cout << " total number of nodes= " << total_nodes << endl;
+				//cout << " max number of incoming edges = " << max_inedges << endl;
+				//cout << " total number of nodes= " << total_nodes << endl;
 
 
 			outfile << " max number of outgoing edges = " << max_outedges << endl;
@@ -142,8 +177,11 @@ int main() {
 			indegree_vec.clear();
 			vctr.clear();
 			outfile.close();
+			
 		}
 	}
+
+
 
 	system("pause");
 	return 0;
