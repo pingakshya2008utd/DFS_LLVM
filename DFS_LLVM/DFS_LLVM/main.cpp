@@ -65,36 +65,43 @@ private:
 int main() {
 
 	vector <string> dot_file_path_vec;
-	std::string path= "O:/ultimate_new_ave8_timed/";
-	std::string ext=".dot";
+	std::string path = "O:/matrix_mult_2000";
+	std::string ext = ".dot";
 	for (auto& p : fs::recursive_directory_iterator(path))
 	{
 		if (p.path().extension() == ext) {
 
 			string p_str = to_string(p);
-			if (p_str.find("cfg.ave8.dot") != string::npos) {
+			if (p_str.find("cfg.matrixmul.dot") != string::npos) {
 				dot_file_path_vec.push_back(p_str);
 				//std::cout << p_str << '\n';
 			}
 
 		}
-			
+
 	}
-	
-	
-	
-	//vector <string> func_names{ "quantl", "encode", "decode", "reset", "upzero", "adpcm_main" };
-	vector <string> func_names{  "ave8" };
+
+
+
+	//vector <string> func_names{ "quantl", "encode", "decode", "reset", "upzero", "adpcm_main" }; //adpcm
+	//vector <string> func_names{  "ave8" }; //ave8
+	//vector <string> func_names{ "matrixmul" }; //matrixmul
+	//vector <string> func_names{ "float64_add", "addFloat64Sigs", "propagateFloat64NaN", "roundAndPackFloat64", "subFloat64Sigs" }; //dfadd
+	//vector <string> func_names{ "local_sin", "addFloat64Sigs", "estimateDiv128To64", "float64_le", "float64_mul", "propagateFloat64NaN"
+		//"roundAndPackFloat64", "subFloat64Sigs" };//dfsin
+	vector <string> func_names{ "float64_div", "estimateDiv128To64", "propagateFloat64NaN", "roundAndPackFloat64" }; //dfdiv
+
+
 	file_counter = 1;
 
-	for(int i=0; i<dot_file_path_vec.size(); i++){
-	//for (int i = 72; i < 73; i++) {
+	//for(int i=0; i<dot_file_path_vec.size(); i++){
+	for (int i = 0; i < 200; i++) {
 		string directory_name = "total_new_solution " + to_string(i);
-		cout << directory_name << endl;
+	//	cout << directory_name << endl;
 		for (int j = 0; j < func_names.size(); j++) {
 			file_counter++;
-			//string dot_file_name = "O:/total_new_apdcm/total_new_solution"+to_string(i)+"/cfg." + func_names[j] + ".dot";
-			string dot_file_name = dot_file_path_vec[i];
+			string dot_file_name = "O:/ultimate_new_dfdiv/ultimate_new_solution"+to_string(i)+"/cfg." + func_names[j] + ".dot";
+			//string dot_file_name = dot_file_path_vec[i];
 			replace(dot_file_name.begin(), dot_file_name.end(), '\\', '/');
 			cout << dot_file_name << endl;
 
@@ -106,8 +113,9 @@ int main() {
 			func_name_for_res = func_names[j];
 			file_counter = i;
 			string write_file_str = dot_file_name;
-			write_file_str.erase(write_file_str.length() - 12);
-			result_file_name = write_file_str  + func_names[j] + "_data.res";
+			write_file_str.erase(write_file_str.length() - 17);
+			//result_file_name = write_file_str  + func_names[j] + "_data.res";
+			result_file_name="O:/ultimate_new_dfdiv/ultimate_new_solution" + to_string(i) + "/" + func_names[j] + "_data.res";
 		//	cout << result_file_name << endl;
 			
 			//string result_file_name = "O:/total_new_apdcm/total_new_solution"+to_string(i)+"/" + func_names[j] + "_data.res";
